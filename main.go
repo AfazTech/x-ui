@@ -11,7 +11,6 @@ import (
 	"x-ui/config"
 	"x-ui/database"
 	"x-ui/logger"
-	"x-ui/v2ui"
 	"x-ui/web"
 	"x-ui/web/global"
 	"x-ui/web/service"
