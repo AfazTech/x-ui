@@ -35,8 +35,6 @@ if [[ $arch == "x86_64" || $arch == "x64" || $arch == "amd64" ]]; then
     arch="amd64"
 elif [[ $arch == "aarch64" || $arch == "arm64" ]]; then
     arch="arm64"
-elif [[ $arch == "s390x" ]]; then
-    arch="s390x"
 else
     arch="amd64"
     echo -e "${red} Fail to check system arch,will use default arch here: ${arch}${plain}"
@@ -86,6 +84,7 @@ config_after_install() {
     echo -e "${yellow} Install/update finished need to modify panel settings out of security ${plain}"
     read -p "are you continue,if you type n will skip this at this time[y/n]": config_confirm
     if [[ x"${config_confirm}" == x"y" || x"${config_confirm}" == x"Y" ]]; then
+        changeSetting=true
         read -p "please set up your username:" config_account
         echo -e "${yellow}your username will be:${config_account}${plain}"
         read -p "please set up your password:" config_password
@@ -142,12 +141,6 @@ install_x-ui() {
     chmod +x /usr/local/x-ui/x-ui.sh
     chmod +x /usr/bin/x-ui
     config_after_install
-    #echo -e "如果是全新安装，默认网页端口为 ${green}54321${plain}，用户名和密码默认都是 ${green}admin${plain}"
-    #echo -e "请自行确保此端口没有被其他程序占用，${yellow}并且确保 54321 端口已放行${plain}"
-    #    echo -e "若想将 54321 修改为其它端口，输入 x-ui 命令进行修改，同样也要确保你修改的端口也是放行的"
-    #echo -e ""
-    #echo -e "如果是更新面板，则按你之前的方式访问面板"
-    #echo -e ""
     systemctl daemon-reload
     systemctl enable x-ui
     systemctl start x-ui
@@ -163,13 +156,17 @@ install_x-ui() {
     echo -e "x-ui enable       - Enable    x-ui on system startup"
     echo -e "x-ui disable      - Disable   x-ui on system startup"
     echo -e "x-ui log          - Check     x-ui logs"
-    echo -e "x-ui v2-ui        - Migrate   v2-ui Account data to x-ui"
     echo -e "x-ui update       - Update    x-ui"
     echo -e "x-ui install      - Install   x-ui"
     echo -e "x-ui uninstall    - Uninstall x-ui"
     echo -e "----------------------------------------------"
 }
-
-echo -e "${green}excuting...${plain}"
 install_base
 install_x-ui $1
+if [ "$changeSetting" = true ]; then
+    ip=$(ip -4 route get 1.1.1.1 | sed -n 's/^.*src \([0-9.]*\).*$/\1/p')
+    echo "login url: http://$ip:$config_port/staff"
+    echo "username: $config_account"
+    echo "password: $config_password"
+fi
+

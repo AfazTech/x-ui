@@ -5,7 +5,7 @@ green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
 
-#Add some basic function here
+
 function LOGD() {
     echo -e "${yellow}[DEG] $* ${plain}"
 }
@@ -167,7 +167,11 @@ reset_config() {
         return 0
     fi
     /usr/local/x-ui/x-ui setting -reset
-    echo -e "All panel settings have been reset to default，Please restart the panel now，and use the default ${green}54321${plain} Port to Access the web Panel"
+    echo -e "All panel settings have been reset to default"
+    ip=$(ip -4 route get 1.1.1.1 | sed -n 's/^.*src \([0-9.]*\).*$/\1/p')
+    echo "login url: http://$ip:2087/staff"
+    echo "username: admim"
+    echo "password: admin"
     confirm_restart
 }
 
@@ -295,7 +299,6 @@ migrate_v2_ui() {
 }
 
 install_bbr() {
-    # temporary workaround for installing bbr
     bash <(curl -L -s https://raw.githubusercontent.com/teddysun/across/master/bbr.sh)
     echo ""
     before_show_menu
@@ -313,7 +316,7 @@ update_shell() {
     fi
 }
 
-# 0: running, 1: not running, 2: not installed
+
 check_status() {
     if [[ ! -f /etc/systemd/system/x-ui.service ]]; then
         return 2
@@ -494,7 +497,6 @@ show_usage() {
     echo "x-ui enable       - Enable    x-ui on system startup"
     echo "x-ui disable      - Disable   x-ui on system startup"
     echo "x-ui log          - Check     x-ui logs"
-    echo "x-ui v2-ui        - Migrate   v2-ui Account data to x-ui"
     echo "x-ui update       - Update    x-ui"
     echo "x-ui install      - Install   x-ui"
     echo "x-ui uninstall    - Uninstall x-ui"

@@ -133,7 +133,7 @@ func (s *Server) getHtmlTemplate(funcMap template.FuncMap) (*template.Template, 
 		if d.IsDir() {
 			newT, err := t.ParseFS(htmlFS, path+"/*.html")
 			if err != nil {
-				// ignore
+
 				return nil
 			}
 			t = newT
@@ -185,7 +185,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	}
 
 	if config.IsDebug() {
-		// for develop
+
 		files, err := s.getHtmlFiles()
 		if err != nil {
 			return nil, err
@@ -193,7 +193,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 		engine.LoadHTMLFiles(files...)
 		engine.StaticFS(basePath+"assets", http.FS(os.DirFS("web/assets")))
 	} else {
-		// for prod
+
 		t, err := s.getHtmlTemplate(engine.FuncMap)
 		if err != nil {
 			return nil, err
@@ -237,11 +237,11 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 		names := make([]string, 0)
 		keyLen := len(key)
 		for i := 0; i < keyLen-1; i++ {
-			if key[i:i+2] == "{{" { // 判断开头 "{{"
+			if key[i:i+2] == "{{" {
 				j := i + 2
 				isFind := false
 				for ; j < keyLen-1; j++ {
-					if key[j:j+2] == "}}" { // 结尾 "}}"
+					if key[j:j+2] == "}}" {
 						isFind = true
 						break
 					}
@@ -271,10 +271,9 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 		})
 	}
 
-	engine.FuncMap["i18n"]  = I18n;
+	engine.FuncMap["i18n"] = I18n
 
 	engine.Use(func(c *gin.Context) {
-		//accept := c.GetHeader("Accept-Language")
 
 		var lang string
 
@@ -286,7 +285,7 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 
 		localizer = i18n.NewLocalizer(bundle, lang)
 		c.Set("localizer", localizer)
-		c.Set("I18n" , I18n)
+		c.Set("I18n", I18n)
 		c.Next()
 	})
 
@@ -298,22 +297,19 @@ func (s *Server) startTask() {
 	if err != nil {
 		logger.Warning("start xray failed:", err)
 	}
-	// 每 30 秒检查一次 xray 是否在运行
+
 	s.cron.AddJob("@every 30s", job.NewCheckXrayRunningJob())
 
 	go func() {
 		time.Sleep(time.Second * 5)
-		// 每 10 秒统计一次流量，首次启动延迟 5 秒，与重启 xray 的时间错开
+
 		s.cron.AddJob("@every 10s", job.NewXrayTrafficJob())
 	}()
 
-	// 每 30 秒检查一次 inbound 流量超出和到期的情况
 	s.cron.AddJob("@every 30s", job.NewCheckInboundJob())
 
-	// check client ips from log file every 10 sec
 	s.cron.AddJob("@every 10s", job.NewCheckClientIpJob())
 
-	// 每一天提示一次流量情况,上海时间8点30
 	var entry cron.EntryID
 	isTgbotenabled, err := s.settingService.GetTgbotenabled()
 	if (err == nil) && (isTgbotenabled) {
@@ -328,7 +324,7 @@ func (s *Server) startTask() {
 			logger.Warning("Add NewStatsNotifyJob error", err)
 			return
 		}
-		// listen for TG bot income messages
+
 		go job.NewStatsNotifyJob().OnReceive()
 	} else {
 		s.cron.Remove(entry)
@@ -336,7 +332,7 @@ func (s *Server) startTask() {
 }
 
 func (s *Server) Start() (err error) {
-	//这是一个匿名函数，没没有函数名
+
 	defer func() {
 		if err != nil {
 			s.Stop()
