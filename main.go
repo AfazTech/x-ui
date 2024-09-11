@@ -262,16 +262,6 @@ func main() {
 			return
 		}
 		runWebServer()
-	case "v2-ui":
-		err := v2uiCmd.Parse(os.Args[2:])
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		err = v2ui.MigrateFromV2UI(dbPath)
-		if err != nil {
-			fmt.Println("migrate from v2-ui failed:", err)
-		}
 	case "setting":
 		err := settingCmd.Parse(os.Args[2:])
 		if err != nil {
