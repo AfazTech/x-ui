@@ -18,7 +18,7 @@ x-ui is a management panel for creating and managing Vmess, Vless, Shadowsocks (
 ### Install using the script
 To install x-ui using the script, run the following command:
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/imafaz/x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/AfazTech/x-ui/master/install.sh)
 ```
 
 ### Install using Docker
@@ -31,4 +31,4 @@ docker pull mrafaz/x-ui:0.0.1
 If you want to contribute to the development of this project, you can submit your code via Pull Request. You can also report issues and bugs through the Issues section.
 
 ## License
-This project is licensed under the MIT [License](https://github.com/imafaz/x-ui/blob/main/LICENSE). For more information, see the LICENSE file.
+This project is licensed under the MIT [License](https://github.com/AfazTech/x-ui/blob/main/LICENSE). For more information, see the LICENSE file.
